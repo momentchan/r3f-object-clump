@@ -12,8 +12,10 @@
     "vite": "^4.5.0"
   },
   "dependencies": {
+    "@react-three/cannon": "^6.6.0",
     "@react-three/drei": "^9.75.0",
     "@react-three/fiber": "^8.15.14",
+    "@react-three/postprocessing": "^2.16.2",
     "leva": "^0.9.35",
     "maath": "^0.10.7",
     "r3f-perf": "^7.1.2",
