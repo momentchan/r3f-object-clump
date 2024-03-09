@@ -3,7 +3,7 @@ import { useTexture } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useControls } from 'leva'
 import * as THREE from 'three'
-import { Outlines } from './Outlines'
+import { Outlines } from './r3f-gist/effect/Outlines'
 
 const count = 40
 const rfs = THREE.MathUtils.randFloatSpread
