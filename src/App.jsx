@@ -15,7 +15,7 @@ export default function App() {
                 fov: 35,
                 near: 1,
                 far: 40,
-                position: [0, 0, 20]
+                position: [0, 0, 15]
             }}>
 
             <color attach='background' args={["#dfdfdf"]} />
@@ -26,11 +26,9 @@ export default function App() {
             <spotLight intensity={1} angle={0.2} penumbra={1} position={[30, 30, 30]} castShadow shadow-mapSize={[512, 512]} />
 
             <Physics gravity={[0, 2, 0]} iterations={10}>
-                <Debug color="black" scale={1.1}>
-                    <Pointer />
-                    <Clump />
-                    {/* children */}
-                </Debug>
+                <Pointer />
+                <Clump />
+                {/* children */}
             </Physics>
 
 
