@@ -61,7 +61,7 @@ export default function Clump({ mat = new THREE.Matrix4(), vec = new THREE.Vecto
             const vel = vectorArrayRef.current[i]
             var speed = Math.sqrt(vel[0] ** 2 + vel[1] ** 2 + vel[2] ** 2);
             speed = isNaN(speed) ? 0 : speed
-            speedBuffer.setX(i, speed / 30)
+            speedBuffer.setX(i, Math.pow(speed / 20, 2))
         }
         speedBuffer.needsUpdate = true
         ref.current.geometry.setAttribute('speedBuffer', speedBuffer);
