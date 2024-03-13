@@ -1,9 +1,8 @@
 import * as THREE from 'three'
 import { useTexture } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { useControls } from 'leva'
 import { Outlines } from './r3f-gist/effect/Outlines'
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import ThreeCustomShaderMaterial from 'three-custom-shader-material'
 import { patchShaders } from 'gl-noise'
 import { InstancedRigidBodies, vec3 } from '@react-three/rapier'
@@ -27,14 +26,18 @@ const shader = {
       }
       `,
 }
+const applyForce = (api, scaler) => {
+    const pos = vec3(api.translation())
+    api.applyImpulse(pos.normalize().multiplyScalar(scaler))
+}
 
 export default function Clump({ mat = new THREE.Matrix4(), vec = new THREE.Vector3(), ...props }) {
+    const [hitSound] = useState(() => new Audio('./721342__jerimee__table-tennis-toggle.wav'))
     const texture = useTexture('eye.png')
-    const { outlines } = useControls({ outlines: { value: 0.0, step: 0.01, min: 0, max: 0.05 } })
-    const speedBuffer = new THREE.InstancedBufferAttribute(new Float32Array(count), 1);
-
     const rigidBodies = useRef();
     const mesh = useRef()
+    const speedBuffer = new THREE.InstancedBufferAttribute(new Float32Array(count), 1);
+
     const instances = useMemo(() => {
         const instances = [];
 
@@ -56,7 +59,7 @@ export default function Clump({ mat = new THREE.Matrix4(), vec = new THREE.Vecto
             const api = rigidBodies.current[i]
             if (api == null) continue
             const pos = vec3(api.translation())
-            api.applyImpulse(pos.normalize().multiplyScalar(-1))
+            applyForce(api, -1)
             const vel = api.linvel()
             const speed = Math.sqrt(vel.x ** 2 + vel.y ** 2 + vel.z ** 2);
             speedBuffer.setX(i, Math.pow(speed / 20, 2))
@@ -66,13 +69,30 @@ export default function Clump({ mat = new THREE.Matrix4(), vec = new THREE.Vecto
         mesh.current.geometry.setAttribute('speedBuffer', speedBuffer);
     })
 
+
     return (
         <InstancedRigidBodies
             ref={rigidBodies}
             instances={instances}
             friction={1}
             restitution={0}
-            colliders='ball'>
+            colliders='ball'
+            onClick={evt => {
+                evt.intersections.forEach(i => {
+                    applyForce(rigidBodies.current[i.instanceId], 20)
+                })
+            }}
+            linearDamping={0.65}
+            angularDamping={0.5}
+            mass={1}
+            onContactForce={(payload) => {
+                if (payload.totalForceMagnitude > 500) {
+                    hitSound.currentTime = 0;
+                    hitSound.volume = rfs(0.25) + 0.75;
+                    hitSound.play();
+                }
+            }}
+        >
 
             <instancedMesh
                 ref={mesh}
@@ -89,7 +109,7 @@ export default function Clump({ mat = new THREE.Matrix4(), vec = new THREE.Vecto
                     vertexShader={patchShaders(shader.vertex)}
                 >
                 </ThreeCustomShaderMaterial>
-                <Outlines thickness={outlines} />
+                <Outlines thickness={0.01} />
             </instancedMesh>
         </InstancedRigidBodies>
     )

@@ -24,7 +24,7 @@ export default function App() {
             <spotLight intensity={1} angle={0.2} penumbra={1} position={[30, 30, 30]} castShadow shadow-mapSize={[512, 512]} />
 
             <Physics gravity={[0, 0, 0]}>
-                <Pointer />
+                <Pointer scale={3} />
                 <Clump />
             </Physics>
 
@@ -32,6 +32,7 @@ export default function App() {
                 <N8AO halfRes color='black' aoRadius={2} intensity={1} aoSamples={6} denoiseSamples={4} />
                 <SMAA />
             </EffectComposer>
+            <OrbitControls makeDefault />
         </Canvas>
     </>
 }
