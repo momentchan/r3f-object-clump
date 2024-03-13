@@ -86,7 +86,7 @@ export default function Clump({ mat = new THREE.Matrix4(), vec = new THREE.Vecto
             angularDamping={0.5}
             mass={1}
             onContactForce={(payload) => {
-                if (payload.totalForceMagnitude > 500) {
+                if (payload.totalForceMagnitude > 300) {
                     hitSound.currentTime = 0;
                     hitSound.volume = rfs(0.25) + 0.75;
                     hitSound.play();
